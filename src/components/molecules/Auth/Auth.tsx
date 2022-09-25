@@ -81,7 +81,6 @@ export const Auth: FC = () => {
     formData.set('username', username);
     formData.set('password', password);
     const res = await _fetchData('phase=1', formData);
-    console.log(res);
     if (res.status !== 0) {
       setLoginError(res.message);
       return;
@@ -96,7 +95,15 @@ export const Auth: FC = () => {
     const bearer = `Bearer ${token}`;
     const formData = new FormData();
     formData.set('tfa', verifyCode);
-    const res = await _fetchData('phase=2', formData, { 'Authorization': bearer });
+    const headers = new Headers({
+      'Authorization': bearer,
+      'Content-Type': 'multipart/form-data',
+    });
+    const res = await _fetchData(
+      'phase=2',
+      formData,
+      headers,
+    );
     if (res.status !== 0) {
       setVerifyError(res.message || 'network error');
       return;
